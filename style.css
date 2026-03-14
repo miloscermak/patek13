@@ -1,35 +1,36 @@
-/* === Design systém === */
+/* === Design systém – dark téma === */
 :root {
   /* Barvy */
-  --color-bg: #fafaf9;
-  --color-bg-end: #f0ebe4;
-  --color-surface: #ffffff;
-  --color-text: #1c1917;
-  --color-text-muted: #78716c;
-  --color-border: #e7e5e4;
-  --color-accent: #dc2626;
-  --color-accent-soft: #fef2f2;
-  --color-accent-hover: #b91c1c;
-  --color-link: #1d4ed8;
+  --color-bg: #09090b;
+  --color-surface: rgba(255, 255, 255, 0.04);
+  --color-surface-hover: rgba(255, 255, 255, 0.06);
+  --color-text: #fafafa;
+  --color-text-muted: #71717a;
+  --color-border: rgba(255, 255, 255, 0.08);
+  --color-accent: #ef4444;
+  --color-accent-soft: rgba(239, 68, 68, 0.12);
+  --color-accent-hover: #dc2626;
+  --color-accent-glow: rgba(239, 68, 68, 0.25);
+  --color-link: #a1a1aa;
 
   /* Typografie */
   --font: 'DM Sans', system-ui, -apple-system, sans-serif;
 
   /* Rozměry */
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 20px;
-  --radius-xl: 28px;
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 22px;
+  --radius-xl: 30px;
 
   /* Stíny */
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06);
-  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.08);
-  --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.1);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 20px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.5);
 
   /* Animace */
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   --duration-fast: 200ms;
-  --duration-normal: 400ms;
+  --duration-normal: 500ms;
 }
 
 /* === Reset === */
@@ -41,45 +42,50 @@
 body {
   font-family: var(--font);
   color: var(--color-text);
-  background: linear-gradient(180deg, var(--color-bg) 0%, var(--color-bg-end) 100%);
+  background: var(--color-bg);
   min-height: 100vh;
   display: flex;
   justify-content: center;
   -webkit-font-smoothing: antialiased;
+  /* Jemný radiální gradient pro hloubku */
+  background-image:
+    radial-gradient(ellipse 60% 50% at 50% 0%, rgba(239, 68, 68, 0.06) 0%, transparent 70%),
+    radial-gradient(ellipse 80% 40% at 50% 100%, rgba(120, 60, 200, 0.04) 0%, transparent 70%);
+  background-attachment: fixed;
 }
 
 /* === Layout === */
 .app {
   max-width: 520px;
   width: 100%;
-  padding: 56px 24px 48px;
+  padding: 64px 24px 48px;
 }
 
 /* === Hlavička === */
 .hero {
   text-align: center;
-  margin-bottom: 36px;
+  margin-bottom: 44px;
 }
 
 .hero h1 {
-  font-size: clamp(1.8rem, 5vw, 2.5rem);
-  font-weight: 800;
+  font-size: clamp(1.6rem, 5vw, 2.2rem);
+  font-weight: 700;
   letter-spacing: -0.02em;
-  line-height: 1.1;
-  margin-bottom: 8px;
+  line-height: 1.25;
+  color: var(--color-text);
 }
 
-.subtitle {
-  color: var(--color-text-muted);
-  font-size: 1.05rem;
-  font-weight: 400;
+.hero h1 em {
+  font-style: normal;
+  color: var(--color-accent);
 }
 
 /* === Přepínač režimů === */
 .mode-switch {
   display: flex;
-  gap: 4px;
-  background: var(--color-border);
+  gap: 2px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
   padding: 4px;
   margin-bottom: 28px;
@@ -93,29 +99,30 @@ body {
   background: transparent;
   color: var(--color-text-muted);
   font-family: var(--font);
-  font-size: 0.95rem;
-  font-weight: 600;
+  font-size: 0.9rem;
+  font-weight: 500;
   cursor: pointer;
   transition: all var(--duration-fast) var(--ease-out);
 }
 
 .mode-btn.active {
-  background: var(--color-surface);
+  background: rgba(255, 255, 255, 0.1);
   color: var(--color-text);
-  box-shadow: var(--shadow-sm);
 }
 
 .mode-btn:hover:not(.active) {
   color: var(--color-text);
+  background: rgba(255, 255, 255, 0.03);
 }
 
 /* === Panely === */
 .panel {
   background: var(--color-surface);
+  border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
   padding: 28px 24px;
-  box-shadow: var(--shadow-md);
   margin-bottom: 20px;
+  backdrop-filter: blur(12px);
   animation: fadeIn var(--duration-normal) var(--ease-out);
 }
 
@@ -126,31 +133,36 @@ body {
 /* === Formulářové prvky === */
 label {
   display: block;
-  font-size: 0.9rem;
-  font-weight: 600;
+  font-size: 0.8rem;
+  font-weight: 500;
   color: var(--color-text-muted);
-  margin-bottom: 6px;
+  margin-bottom: 8px;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.08em;
 }
 
 input[type="date"] {
   width: 100%;
   padding: 12px 16px;
-  border: 2px solid var(--color-border);
-  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
   font-family: var(--font);
   font-size: 1rem;
   color: var(--color-text);
-  background: var(--color-surface);
+  background: rgba(255, 255, 255, 0.03);
   transition: border-color var(--duration-fast), box-shadow var(--duration-fast);
   margin-bottom: 16px;
+  color-scheme: dark;
 }
 
 input[type="date"]:focus {
   outline: none;
   border-color: var(--color-accent);
   box-shadow: 0 0 0 3px var(--color-accent-soft);
+}
+
+input[type="date"]:hover {
+  border-color: rgba(255, 255, 255, 0.15);
 }
 
 .date-row {
@@ -168,33 +180,36 @@ input[type="date"]:focus {
   width: 100%;
   padding: 14px 24px;
   border: none;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-sm);
   background: var(--color-accent);
   color: #fff;
   font-family: var(--font);
-  font-size: 1rem;
-  font-weight: 700;
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
   cursor: pointer;
-  transition: background var(--duration-fast), transform var(--duration-fast);
+  transition: all var(--duration-fast) var(--ease-out);
 }
 
 .btn-primary:hover {
   background: var(--color-accent-hover);
+  box-shadow: 0 0 24px var(--color-accent-glow);
   transform: translateY(-1px);
 }
 
 .btn-primary:active {
   transform: translateY(0);
+  box-shadow: none;
 }
 
 /* === Chybová hláška === */
 .error-box {
   background: var(--color-accent-soft);
-  color: var(--color-accent);
-  border: 1px solid #fecaca;
-  border-radius: var(--radius-md);
+  color: #fca5a5;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  border-radius: var(--radius-sm);
   padding: 12px 16px;
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   font-weight: 500;
   margin-bottom: 20px;
   animation: fadeIn var(--duration-fast) var(--ease-out);
@@ -203,55 +218,79 @@ input[type="date"]:focus {
 /* === Výsledková karta === */
 .result-card {
   text-align: center;
-  padding: 44px 24px 32px;
+  padding: 48px 24px 36px;
   background: var(--color-surface);
+  border: 1px solid var(--color-border);
   border-radius: var(--radius-xl);
-  box-shadow: var(--shadow-lg);
   margin-bottom: 20px;
+  backdrop-filter: blur(12px);
   animation: slideUp var(--duration-normal) var(--ease-out);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Jemná červená záře za číslem */
+.result-card::before {
+  content: '';
+  position: absolute;
+  top: 20%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 200px;
+  height: 200px;
+  background: radial-gradient(circle, var(--color-accent-glow) 0%, transparent 70%);
+  pointer-events: none;
+  opacity: 0.5;
 }
 
 .result-number {
-  font-size: clamp(3.5rem, 10vw, 7rem);
+  font-size: clamp(4rem, 12vw, 8rem);
   font-weight: 900;
   color: var(--color-accent);
   line-height: 1;
-  letter-spacing: -0.03em;
-  margin-bottom: 4px;
+  letter-spacing: -0.04em;
+  margin-bottom: 8px;
+  position: relative;
+  /* Jemný text-shadow pro glow efekt */
+  text-shadow: 0 0 40px var(--color-accent-glow);
 }
 
 .result-label {
-  font-size: 1.15rem;
-  font-weight: 600;
+  font-size: 1.1rem;
+  font-weight: 500;
   color: var(--color-text-muted);
   margin-bottom: 4px;
+  position: relative;
 }
 
 .result-detail {
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   color: var(--color-text-muted);
+  opacity: 0.7;
   margin-bottom: 0;
+  position: relative;
 }
 
 /* === Rozbalovací seznam dat === */
 .date-list-wrapper {
-  margin-top: 28px;
+  margin-top: 32px;
   text-align: left;
   border-top: 1px solid var(--color-border);
   padding-top: 20px;
+  position: relative;
 }
 
 .date-list-wrapper summary {
   cursor: pointer;
-  font-weight: 600;
+  font-weight: 500;
   color: var(--color-link);
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   padding: 4px 0;
   transition: color var(--duration-fast);
 }
 
 .date-list-wrapper summary:hover {
-  color: var(--color-accent);
+  color: var(--color-text);
 }
 
 .date-list {
@@ -263,9 +302,9 @@ input[type="date"]:focus {
 }
 
 .date-list li {
-  padding: 6px 0;
+  padding: 7px 0;
   color: var(--color-text-muted);
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   font-variant-numeric: tabular-nums;
   border-bottom: 1px solid var(--color-border);
   break-inside: avoid;
@@ -274,21 +313,21 @@ input[type="date"]:focus {
 /* === Patička === */
 .footer {
   text-align: center;
-  padding-top: 12px;
+  padding-top: 16px;
 }
 
 .footer p {
   color: var(--color-text-muted);
-  font-size: 0.82rem;
+  font-size: 0.78rem;
   line-height: 1.6;
-  opacity: 0.7;
+  opacity: 0.4;
 }
 
 /* === Animace === */
 @keyframes slideUp {
   from {
     opacity: 0;
-    transform: translateY(24px);
+    transform: translateY(28px);
   }
   to {
     opacity: 1;
@@ -304,7 +343,7 @@ input[type="date"]:focus {
 /* === Responzivní úpravy === */
 @media (max-width: 480px) {
   .app {
-    padding: 36px 16px 32px;
+    padding: 40px 16px 32px;
   }
 
   .panel {
@@ -321,6 +360,6 @@ input[type="date"]:focus {
   }
 
   .result-card {
-    padding: 36px 20px 28px;
+    padding: 40px 20px 28px;
   }
 }
