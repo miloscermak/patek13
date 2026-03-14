@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Počet pátků třináctého</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --panel: #111827;
+      --panel-2: #1f2937;
+      --text: #e5e7eb;
+      --muted: #9ca3af;
+      --accent: #22c55e;
+      --accent-2: #38bdf8;
+      --danger: #ef4444;
+      --border: #334155;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background: linear-gradient(160deg, var(--bg), #020617 65%);
+      color: var(--text);
+      min-height: 100vh;
+    }
+    .wrap {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 32px 20px 48px;
+    }
+    h1 {
+      font-size: clamp(1.8rem, 3vw, 2.6rem);
+      margin: 0 0 12px;
+    }
+    p.lead {
+      color: var(--muted);
+      margin: 0 0 24px;
+      line-height: 1.6;
+      max-width: 72ch;
+    }
+    .grid {
+      display: grid;
+      gap: 20px;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      align-items: start;
+    }
+    .card {
+      background: rgba(17, 24, 39, 0.88);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.22);
+      backdrop-filter: blur(6px);
+    }
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+    input[type="date"] {
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: var(--panel-2);
+      color: var(--text);
+      font-size: 1rem;
+    }
+    .row {
+      display: grid;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+    button {
+      appearance: none;
+      border: none;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      color: #001018;
+      font-weight: 800;
+      padding: 12px 16px;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+    button:hover { filter: brightness(1.05); }
+    .muted {
+      color: var(--muted);
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+    .result {
+      display: flex;
+      gap: 18px;
+      align-items: center;
+      margin-top: 8px;
+      flex-wrap: wrap;
+    }
+    .count {
+      font-size: clamp(2.2rem, 5vw, 4rem);
+      font-weight: 900;
+      line-height: 1;
+      color: var(--accent);
+      min-width: 96px;
+    }
+    .status {
+      color: var(--muted);
+      line-height: 1.6;
+    }
+    .error {
+      color: #fecaca;
+      background: rgba(127, 29, 29, 0.35);
+      border: 1px solid rgba(239, 68, 68, 0.45);
+      border-radius: 12px;
+      padding: 12px 14px;
+      margin-top: 12px;
+    }
+    details {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px 16px;
+      background: rgba(31, 41, 55, 0.55);
+    }
+    details + details { margin-top: 14px; }
+    summary {
+      cursor: pointer;
+      font-weight: 700;
+      margin: -2px 0;
+    }
+    ul.date-list {
+      columns: 2;
+      gap: 22px;
+      padding-left: 18px;
+      margin: 14px 0 0;
+    }
+    @media (max-width: 760px) {
+      ul.date-list { columns: 1; }
+    }
+    code, pre {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    }
+    pre {
+      white-space: pre-wrap;
+      line-height: 1.5;
+      margin: 12px 0 0;
+      color: #d1fae5;
+    }
+    .pill {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(56, 189, 248, 0.12);
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      color: #bae6fd;
+      font-size: 0.9rem;
+      margin-top: 10px;
+    }
+    .footer-note {
+      margin-top: 24px;
+      color: var(--muted);
+      font-size: 0.92rem;
+      line-height: 1.6;
+    }
+    .example {
+      margin-top: 14px;
+      padding: 12px 14px;
+      border-radius: 12px;
+      background: rgba(34, 197, 94, 0.08);
+      border: 1px solid rgba(34, 197, 94, 0.28);
+      color: #dcfce7;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Počet pátků třináctého</h1>
+    <p class="lead">
+      Zadej dvě data a aplikace spočítá, kolik <strong>pátků třináctého</strong> leží v intervalu
+      <strong>včetně obou mezních dat</strong>. Výpočet je čistě algoritmický, bez závislosti na časové zóně.
+    </p>
+
+    <div class="grid">
+      <section class="card">
+        <div class="row">
+          <div>
+            <label for="fromDate">Od</label>
+            <input id="fromDate" type="date" value="1968-08-01" />
+          </div>
+          <div>
+            <label for="toDate">Do</label>
+            <input id="toDate" type="date" value="2026-03-12" />
+          </div>
+        </div>
+        <button id="calcBtn">Spočítat</button>
+        <div class="pill">Výchozí příklad: 1. 8. 1968 až 12. 3. 2026</div>
+
+        <div id="errorBox" class="error" hidden></div>
+
+        <div id="resultBox" class="result" hidden>
+          <div class="count" id="countValue">0</div>
+          <div class="status" id="statusText"></div>
+        </div>
+
+        <div class="example" id="exampleNote">
+          U zadaného příkladu má výsledek vyjít <strong>100</strong>.
+        </div>
+      </section>
+
+      <section class="card">
+        <details open>
+          <summary>Použitý algoritmus</summary>
+          <pre>1. Načti data "od" a "do".
+2. Pokud je "od" později než "do", prohoď je.
+3. Projdi všechny měsíce mezi těmito daty.
+4. V každém měsíci vezmi datum 13.
+5. Pokud platí:
+   - 13. den leží v intervalu od-do (včetně),
+   - a den v týdnu pro toto datum je pátek,
+   pak zvyš počitadlo.
+6. Vrať počet nalezených dat.</pre>
+          <p class="muted">
+            Časová složitost je <strong>O(počet měsíců)</strong>, což je pro běžné použití velmi malé.
+            Každý měsíc má 13. den, takže není potřeba řešit neexistující datum.
+          </p>
+        </details>
+
+        <details>
+          <summary>Matematická poznámka</summary>
+          <p class="muted">
+            Pátek třináctého nastane právě tehdy, když <strong>1. den daného měsíce vychází na neděli</strong>,
+            protože 13. den je o 12 dní později a <code>12 ≡ 5 (mod 7)</code>.
+          </p>
+        </details>
+
+        <details id="datesDetails">
+          <summary>Nalezená data</summary>
+          <ul id="datesList" class="date-list"></ul>
+        </details>
+      </section>
+    </div>
+
+    <p class="footer-note">
+      Implementace používá čisté gregoriánské počítání: validaci data, porovnání dat po složkách
+      a výpočet dne v týdnu pomocí aritmetického vzorce (Tomohiko Sakamoto).
+    </p>
+  </div>
+
+  <script>
+    function isLeapYear(year) {
+      return year % 400 === 0 || (year % 4 === 0 && year % 100 !== 0);
+    }
+
+    function daysInMonth(year, month) {
+      const lengths = [31, isLeapYear(year) ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+      return lengths[month - 1];
+    }
+
+    function parseISODate(value) {
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return null;
+      const [y, m, d] = value.split("-").map(Number);
+      if (m < 1 || m > 12) return null;
+      const dim = daysInMonth(y, m);
+      if (d < 1 || d > dim) return null;
+      return { y, m, d };
+    }
+
+    function compareDates(a, b) {
+      if (a.y !== b.y) return a.y - b.y;
+      if (a.m !== b.m) return a.m - b.m;
+      return a.d - b.d;
+    }
+
+    function nextMonth(date) {
+      if (date.m === 12) return { y: date.y + 1, m: 1 };
+      return { y: date.y, m: date.m + 1 };
+    }
+
+    function dayOfWeek(year, month, day) {
+      // 0 = neděle, 1 = pondělí, ..., 5 = pátek, 6 = sobota
+      const t = [0, 3, 2, 5, 0, 3, 5, 1, 4, 6, 2, 4];
+      let y = year;
+      if (month < 3) y -= 1;
+      return (y + Math.floor(y / 4) - Math.floor(y / 100) + Math.floor(y / 400) + t[month - 1] + day) % 7;
+    }
+
+    function formatDateCZ(date) {
+      return `${date.d}. ${date.m}. ${date.y}`;
+    }
+
+    function countFriday13(from, to) {
+      let normalizedFrom = from;
+      let normalizedTo = to;
+      let swapped = false;
+
+      if (compareDates(normalizedFrom, normalizedTo) > 0) {
+        [normalizedFrom, normalizedTo] = [normalizedTo, normalizedFrom];
+        swapped = true;
+      }
+
+      let y = normalizedFrom.y;
+      let m = normalizedFrom.m;
+      let count = 0;
+      const hits = [];
+
+      while (y < normalizedTo.y || (y === normalizedTo.y && m <= normalizedTo.m)) {
+        const candidate = { y, m, d: 13 };
+
+        if (
+          compareDates(candidate, normalizedFrom) >= 0 &&
+          compareDates(candidate, normalizedTo) <= 0 &&
+          dayOfWeek(y, m, 13) === 5
+        ) {
+          count += 1;
+          hits.push(candidate);
+        }
+
+        ({ y, m } = nextMonth({ y, m }));
+      }
+
+      return { count, hits, normalizedFrom, normalizedTo, swapped };
+    }
+
+    function renderResult(data) {
+      const resultBox = document.getElementById("resultBox");
+      const countValue = document.getElementById("countValue");
+      const statusText = document.getElementById("statusText");
+      const datesList = document.getElementById("datesList");
+      const datesDetails = document.getElementById("datesDetails");
+
+      countValue.textContent = data.count;
+      statusText.innerHTML = `
+        <div><strong>Interval:</strong> ${formatDateCZ(data.normalizedFrom)} až ${formatDateCZ(data.normalizedTo)} (včetně)</div>
+        <div><strong>Počet pátků třináctého:</strong> ${data.count}</div>
+        ${data.swapped ? `<div>Poznámka: data byla automaticky prohozena, protože pole "od" bylo později než pole "do".</div>` : ""}
+      `;
+      resultBox.hidden = false;
+
+      datesList.innerHTML = data.hits
+        .map((date, index) => `<li>${index + 1}. ${formatDateCZ(date)}</li>`)
+        .join("");
+
+      datesDetails.open = data.hits.length > 0;
+    }
+
+    function showError(message) {
+      const box = document.getElementById("errorBox");
+      box.textContent = message;
+      box.hidden = false;
+      document.getElementById("resultBox").hidden = true;
+      document.getElementById("datesList").innerHTML = "";
+    }
+
+    function hideError() {
+      document.getElementById("errorBox").hidden = true;
+    }
+
+    function calculate() {
+      hideError();
+
+      const fromValue = document.getElementById("fromDate").value;
+      const toValue = document.getElementById("toDate").value;
+      const from = parseISODate(fromValue);
+      const to = parseISODate(toValue);
+
+      if (!from || !to) {
+        showError("Zadej prosím dvě platná data.");
+        return;
+      }
+
+      const result = countFriday13(from, to);
+      renderResult(result);
+    }
+
+    document.getElementById("calcBtn").addEventListener("click", calculate);
+    document.getElementById("fromDate").addEventListener("change", calculate);
+    document.getElementById("toDate").addEventListener("change", calculate);
+
+    // Tichá interní kontrola správnosti několika známých případů.
+    (function selfTest() {
+      const test1 = countFriday13(parseISODate("1968-08-01"), parseISODate("2026-03-12"));
+      const test2 = countFriday13(parseISODate("2024-09-13"), parseISODate("2024-09-13"));
+      const test3 = countFriday13(parseISODate("2024-09-14"), parseISODate("2024-12-12"));
+
+      if (test1.count !== 100 || test2.count !== 1 || test3.count !== 0) {
+        console.error("Interní test selhal.", { test1, test2, test3 });
+      }
+    })();
+
+    // Automaticky spočítat výchozí příklad po načtení stránky.
+    calculate();
+  </script>
+</body>
+</html>

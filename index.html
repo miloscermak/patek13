@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pátek třináctého – Kolik jich prožijete?</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800;0,9..40,900;1,9..40,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <main class="app">
+
+    <!-- Hlavička -->
+    <header class="hero">
+      <h1>Pátek třináctého</h1>
+      <p class="subtitle">Kolik smolných pátků jste prožili?</p>
+    </header>
+
+    <!-- Přepínač režimů -->
+    <nav class="mode-switch" role="tablist">
+      <button class="mode-btn active" data-mode="birth" role="tab" aria-selected="true">Můj život</button>
+      <button class="mode-btn" data-mode="range" role="tab" aria-selected="false">Vlastní rozmezí</button>
+    </nav>
+
+    <!-- Režim: datum narození -->
+    <section class="panel" id="panelBirth">
+      <label for="birthDate">Datum narození</label>
+      <input type="date" id="birthDate" />
+      <button class="btn-primary" id="calcBirth">Spočítat</button>
+    </section>
+
+    <!-- Režim: vlastní rozmezí -->
+    <section class="panel hidden" id="panelRange">
+      <div class="date-row">
+        <div class="date-field">
+          <label for="fromDate">Od</label>
+          <input type="date" id="fromDate" />
+        </div>
+        <div class="date-field">
+          <label for="toDate">Do</label>
+          <input type="date" id="toDate" />
+        </div>
+      </div>
+      <button class="btn-primary" id="calcRange">Spočítat</button>
+    </section>
+
+    <!-- Chybová hláška -->
+    <div class="error-box hidden" id="errorBox"></div>
+
+    <!-- Výsledek -->
+    <section class="result-card hidden" id="resultCard">
+      <div class="result-number" id="resultNumber">0</div>
+      <div class="result-label" id="resultLabel"></div>
+      <p class="result-detail" id="resultDetail"></p>
+
+      <details class="date-list-wrapper" id="dateListWrapper">
+        <summary>Zobrazit všechna data</summary>
+        <ul class="date-list" id="dateList"></ul>
+      </details>
+    </section>
+
+    <!-- Patička -->
+    <footer class="footer">
+      <p>Výpočet dne v týdnu používá Sakamotův vzorec. Pátek 13. nastane vždy, když 1. den měsíce připadne na neděli.</p>
+    </footer>
+
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
