@@ -313,13 +313,33 @@ input[type="date"]:hover {
 /* === Patička === */
 .footer {
   text-align: center;
-  padding-top: 16px;
+  padding-top: 24px;
+  margin-top: 8px;
+  border-top: 1px solid var(--color-border);
 }
 
-.footer p {
+.footer-promo {
   color: var(--color-text-muted);
-  font-size: 0.78rem;
-  line-height: 1.6;
+  font-size: 0.85rem;
+  line-height: 1.7;
+  margin-bottom: 16px;
+}
+
+.footer-promo a {
+  color: var(--color-accent);
+  text-decoration: none;
+  font-weight: 600;
+  transition: opacity var(--duration-fast);
+}
+
+.footer-promo a:hover {
+  text-decoration: underline;
+  opacity: 0.85;
+}
+
+.footer-copy {
+  color: var(--color-text-muted);
+  font-size: 0.75rem;
   opacity: 0.4;
 }
 
