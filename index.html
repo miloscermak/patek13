@@ -3,7 +3,18 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Pátek třináctého – Kolik jich prožijete?</title>
+  <title>Pátek třináctého – kolik jste jich už přežili?</title>
+  <meta name="description" content="Zadejte datum narození a zjistěte, kolik pátků třináctého už máte za sebou. Včetně seznamu všech dat." />
+  <meta name="theme-color" content="#09090b" />
+
+  <!-- Náhled při sdílení na sítích -->
+  <meta property="og:type" content="website" />
+  <meta property="og:locale" content="cs_CZ" />
+  <meta property="og:title" content="Kolik pátků třináctého jste už přežili?" />
+  <meta property="og:description" content="Zadejte datum narození a zjistěte, kolik pátků třináctého už máte za sebou." />
+  <meta name="twitter:card" content="summary" />
+
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700;9..40,900&display=swap" rel="stylesheet" />
@@ -19,32 +30,32 @@
     </header>
 
     <!-- Přepínač režimů -->
-    <nav class="mode-switch" role="tablist">
-      <button class="mode-btn active" data-mode="birth" role="tab" aria-selected="true">Můj život</button>
-      <button class="mode-btn" data-mode="range" role="tab" aria-selected="false">Vlastní rozmezí</button>
-    </nav>
+    <div class="mode-switch" role="tablist" aria-label="Režim výpočtu">
+      <button class="mode-btn active" id="tabBirth" data-mode="birth" type="button" role="tab" aria-selected="true" aria-controls="panelBirth">Můj život</button>
+      <button class="mode-btn" id="tabRange" data-mode="range" type="button" role="tab" aria-selected="false" aria-controls="panelRange" tabindex="-1">Vlastní rozmezí</button>
+    </div>
 
     <!-- Režim: datum narození -->
-    <section class="panel" id="panelBirth">
+    <form class="panel" id="panelBirth" role="tabpanel" aria-labelledby="tabBirth" novalidate>
       <label for="birthDate">Datum narození</label>
       <input type="date" id="birthDate" />
-      <button class="btn-primary" id="calcBirth">Spočítat</button>
-    </section>
+      <button class="btn-primary" type="submit">Spočítat</button>
+    </form>
 
     <!-- Režim: vlastní rozmezí -->
-    <section class="panel hidden" id="panelRange">
+    <form class="panel hidden" id="panelRange" role="tabpanel" aria-labelledby="tabRange" novalidate>
       <div class="date-row">
         <div class="date-field">
           <label for="fromDate">Od</label>
-          <input type="date" id="fromDate" />
+          <input type="date" id="fromDate" max="9999-12-31" />
         </div>
         <div class="date-field">
           <label for="toDate">Do</label>
-          <input type="date" id="toDate" />
+          <input type="date" id="toDate" max="9999-12-31" />
         </div>
       </div>
-      <button class="btn-primary" id="calcRange">Spočítat</button>
-    </section>
+      <button class="btn-primary" type="submit">Spočítat</button>
+    </form>
 
     <!-- Chybová hláška -->
     <div class="error-box hidden" id="errorBox" role="alert"></div>
@@ -69,6 +80,7 @@
 
   </main>
 
+  <script src="friday13.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

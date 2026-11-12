@@ -1,99 +1,9 @@
 // ============================================================
-// Pátek třináctého – hlavní aplikační logika
+// Pátek třináctého – obsluha stránky (výpočet je ve friday13.js)
 // ============================================================
 
-// === Algoritmus (převzatý z patek_trinacteho_app.html) ===
-
-function isLeapYear(year) {
-  return year % 400 === 0 || (year % 4 === 0 && year % 100 !== 0);
-}
-
-function daysInMonth(year, month) {
-  const lengths = [31, isLeapYear(year) ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-  return lengths[month - 1];
-}
-
-function parseISODate(value) {
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return null;
-  const [y, m, d] = value.split("-").map(Number);
-  if (m < 1 || m > 12) return null;
-  const dim = daysInMonth(y, m);
-  if (d < 1 || d > dim) return null;
-  return { y, m, d };
-}
-
-function compareDates(a, b) {
-  if (a.y !== b.y) return a.y - b.y;
-  if (a.m !== b.m) return a.m - b.m;
-  return a.d - b.d;
-}
-
-function nextMonth(date) {
-  if (date.m === 12) return { y: date.y + 1, m: 1 };
-  return { y: date.y, m: date.m + 1 };
-}
-
-// Sakamotův vzorec: 0 = neděle, 1 = pondělí, ..., 5 = pátek, 6 = sobota
-function dayOfWeek(year, month, day) {
-  const t = [0, 3, 2, 5, 0, 3, 5, 1, 4, 6, 2, 4];
-  let y = year;
-  if (month < 3) y -= 1;
-  return (y + Math.floor(y / 4) - Math.floor(y / 100) + Math.floor(y / 400) + t[month - 1] + day) % 7;
-}
-
-function formatDateCZ(date) {
-  return `${date.d}. ${date.m}. ${date.y}`;
-}
-
-// Hlavní výpočet – projde všechny měsíce v rozmezí a najde pátky 13.
-function countFriday13(from, to) {
-  let normalizedFrom = from;
-  let normalizedTo = to;
-  let swapped = false;
-
-  if (compareDates(normalizedFrom, normalizedTo) > 0) {
-    [normalizedFrom, normalizedTo] = [normalizedTo, normalizedFrom];
-    swapped = true;
-  }
-
-  let y = normalizedFrom.y;
-  let m = normalizedFrom.m;
-  let count = 0;
-  const hits = [];
-
-  while (y < normalizedTo.y || (y === normalizedTo.y && m <= normalizedTo.m)) {
-    const candidate = { y, m, d: 13 };
-
-    if (
-      compareDates(candidate, normalizedFrom) >= 0 &&
-      compareDates(candidate, normalizedTo) <= 0 &&
-      dayOfWeek(y, m, 13) === 5
-    ) {
-      count += 1;
-      hits.push(candidate);
-    }
-
-    ({ y, m } = nextMonth({ y, m }));
-  }
-
-  return { count, hits, normalizedFrom, normalizedTo, swapped };
-}
-
-// === Self-test ===
-
-(function selfTest() {
-  const test1 = countFriday13(parseISODate("1968-08-01"), parseISODate("2026-03-12"));
-  const test2 = countFriday13(parseISODate("2024-09-13"), parseISODate("2024-09-13"));
-  const test3 = countFriday13(parseISODate("2024-09-14"), parseISODate("2024-12-12"));
-
-  if (test1.count !== 100 || test2.count !== 1 || test3.count !== 0) {
-    console.error("Self-test selhal!", { test1, test2, test3 });
-  }
-})();
-
-// === UI logika ===
-
-let currentMode = "birth";
+// Kdo má v systému vypnuté animace, dostane výsledek rovnou
+const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 // Elementy
 const els = {
@@ -102,8 +12,6 @@ const els = {
   birthDate: document.getElementById("birthDate"),
   fromDate: document.getElementById("fromDate"),
   toDate: document.getElementById("toDate"),
-  calcBirth: document.getElementById("calcBirth"),
-  calcRange: document.getElementById("calcRange"),
   resultCard: document.getElementById("resultCard"),
   resultNumber: document.getElementById("resultNumber"),
   resultLabel: document.getElementById("resultLabel"),
@@ -134,21 +42,35 @@ function sklonovaniPatku(count) {
 
 // Přepínání režimů
 function setupModeSwitch() {
-  const buttons = document.querySelectorAll(".mode-btn");
-  buttons.forEach((btn) => {
-    btn.addEventListener("click", () => {
-      currentMode = btn.dataset.mode;
+  const buttons = [...document.querySelectorAll(".mode-btn")];
 
-      buttons.forEach((b) => {
-        b.classList.toggle("active", b === btn);
-        b.setAttribute("aria-selected", b === btn ? "true" : "false");
-      });
+  function selectMode(selected) {
+    const mode = selected.dataset.mode;
 
-      els.panelBirth.classList.toggle("hidden", currentMode !== "birth");
-      els.panelRange.classList.toggle("hidden", currentMode !== "range");
+    buttons.forEach((b) => {
+      const isSelected = b === selected;
+      b.classList.toggle("active", isSelected);
+      b.setAttribute("aria-selected", isSelected ? "true" : "false");
+      // Tabulátorem se dá dojít jen na aktivní záložku, mezi nimi se chodí šipkami
+      b.tabIndex = isSelected ? 0 : -1;
+    });
 
-      hideResult();
-      hideError();
+    els.panelBirth.classList.toggle("hidden", mode !== "birth");
+    els.panelRange.classList.toggle("hidden", mode !== "range");
+
+    hideResult();
+    hideError();
+  }
+
+  buttons.forEach((btn, index) => {
+    btn.addEventListener("click", () => selectMode(btn));
+
+    btn.addEventListener("keydown", (event) => {
+      if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
+      const step = event.key === "ArrowRight" ? 1 : -1;
+      const next = buttons[(index + step + buttons.length) % buttons.length];
+      selectMode(next);
+      next.focus();
     });
   });
 }
@@ -234,8 +156,8 @@ function animateNumber(element, target) {
   // Zrušit rozběhnutou animaci, jinak by přepsala nový výsledek starým číslem
   cancelAnimationFrame(numberAnimationId);
 
-  if (target === 0) {
-    element.textContent = "0";
+  if (target === 0 || prefersReducedMotion) {
+    element.textContent = target;
     return;
   }
 
@@ -283,11 +205,17 @@ function init() {
   els.birthDate.max = today;
   els.toDate.value = today;
 
-  // Event listenery
-  els.calcBirth.addEventListener("click", calculateBirth);
-  els.birthDate.addEventListener("change", calculateBirth);
+  // Oba režimy počítají stejně: po kliknutí na tlačítko nebo po Enteru.
+  // Schválně ne při každé změně pole – při psaní roku by se přepočítávalo po číslicích.
+  els.panelBirth.addEventListener("submit", (event) => {
+    event.preventDefault();
+    calculateBirth();
+  });
 
-  els.calcRange.addEventListener("click", calculateRange);
+  els.panelRange.addEventListener("submit", (event) => {
+    event.preventDefault();
+    calculateRange();
+  });
 }
 
 document.addEventListener("DOMContentLoaded", init);
