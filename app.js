@@ -16,6 +16,8 @@ const els = {
   resultNumber: document.getElementById("resultNumber"),
   resultLabel: document.getElementById("resultLabel"),
   resultDetail: document.getElementById("resultDetail"),
+  shareBtn: document.getElementById("shareBtn"),
+  shareStatus: document.getElementById("shareStatus"),
   dateList: document.getElementById("dateList"),
   dateListWrapper: document.getElementById("dateListWrapper"),
   errorBox: document.getElementById("errorBox"),
@@ -116,6 +118,15 @@ function calculateRange() {
   showResult(result, "range");
 }
 
+// Připravená kartička ke sdílení: { text, file (Promise) }
+let pendingShare = null;
+
+async function handleShare() {
+  if (!pendingShare) return;
+  const { text, file } = pendingShare;
+  els.shareStatus.textContent = await shareResult(await file, text);
+}
+
 // Zobrazení výsledku s animací
 function showResult(data, mode) {
   // Animace čísla od 0 nahoru
@@ -137,6 +148,19 @@ function showResult(data, mode) {
   els.dateList.innerHTML = data.hits
     .map((date) => `<li>${formatDateCZ(date)}</li>`)
     .join("");
+
+  // Sdílecí kartička jen pro „Můj život“. Kreslí se předem, aby kliknutí
+  // rovnou otevřelo sdílení (prohlížeče ho po delším čekání zablokují).
+  els.shareStatus.textContent = "";
+  els.shareBtn.classList.toggle("hidden", mode !== "birth");
+  if (mode === "birth") {
+    const today = getTodayDate();
+    const isFriday13Today = today.d === 13 && dayOfWeek(today.y, today.m, today.d) === 5;
+    pendingShare = {
+      text: shareText(data.count, isFriday13Today),
+      file: createShareImage(data.count, isFriday13Today),
+    };
+  }
 
   // Zavřít details při novém výpočtu; bez nálezů není co rozbalovat
   els.dateListWrapper.open = false;
@@ -216,6 +240,8 @@ function init() {
     event.preventDefault();
     calculateRange();
   });
+
+  els.shareBtn.addEventListener("click", handleShare);
 }
 
 document.addEventListener("DOMContentLoaded", init);

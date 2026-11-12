@@ -272,6 +272,37 @@ input[type="date"]::-webkit-date-and-time-value {
   position: relative;
 }
 
+/* === Sdílení === */
+.btn-share {
+  position: relative;
+  margin-top: 24px;
+  padding: 12px 28px;
+  border: 1px solid var(--color-accent);
+  border-radius: var(--radius-sm);
+  background: var(--color-accent-soft);
+  color: var(--color-text);
+  font-family: var(--font);
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background var(--duration-fast) var(--ease-out);
+}
+
+.btn-share:hover {
+  background: var(--color-accent-glow);
+}
+
+.share-status {
+  position: relative;
+  margin-top: 10px;
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+}
+
+.share-status:empty {
+  display: none;
+}
+
 /* === Rozbalovací seznam dat === */
 .date-list-wrapper {
   margin-top: 32px;
@@ -319,26 +350,8 @@ input[type="date"]::-webkit-date-and-time-value {
   border-top: 1px solid var(--color-border);
 }
 
-.footer-promo {
-  color: var(--color-text-muted);
-  font-size: 0.85rem;
-  line-height: 1.7;
-  margin-bottom: 16px;
-}
-
-.footer-promo a {
-  color: var(--color-accent);
-  text-decoration: none;
-  font-weight: 600;
-  transition: opacity var(--duration-fast);
-}
-
-.footer-promo a:hover {
-  text-decoration: underline;
-  opacity: 0.85;
-}
-
 .footer-copy {
+  margin-top: 20px;
   color: var(--color-text-muted);
   font-size: 0.75rem;
 }
