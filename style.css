@@ -3,7 +3,6 @@
   /* Barvy */
   --color-bg: #09090b;
   --color-surface: rgba(255, 255, 255, 0.04);
-  --color-surface-hover: rgba(255, 255, 255, 0.06);
   --color-text: #fafafa;
   --color-text-muted: #71717a;
   --color-border: rgba(255, 255, 255, 0.08);
@@ -21,11 +20,6 @@
   --radius-md: 14px;
   --radius-lg: 22px;
   --radius-xl: 30px;
-
-  /* Stíny */
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
-  --shadow-md: 0 4px 20px rgba(0, 0, 0, 0.4);
-  --shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.5);
 
   /* Animace */
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
@@ -169,10 +163,6 @@ input[type="date"]:hover {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 16px;
-}
-
-.date-row input[type="date"] {
-  margin-bottom: 16px;
 }
 
 /* === Tlačítko === */
