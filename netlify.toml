@@ -6,6 +6,7 @@
 [[headers]]
   for = "/*"
   [headers.values]
-    X-Frame-Options = "DENY"
+    # Vložit do iframe smí jen Inspiruj.se a jeho subdomény
+    Content-Security-Policy = "frame-ancestors 'self' https://inspiruj.se https://*.inspiruj.se"
     X-Content-Type-Options = "nosniff"
     Referrer-Policy = "strict-origin-when-cross-origin"
