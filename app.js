@@ -113,19 +113,16 @@ const els = {
   errorBox: document.getElementById("errorBox"),
 };
 
-// Dnešní datum jako ISO string
-function getTodayISO() {
-  const now = new Date();
-  const y = now.getFullYear();
-  const m = String(now.getMonth() + 1).padStart(2, "0");
-  const d = String(now.getDate()).padStart(2, "0");
-  return `${y}-${m}-${d}`;
-}
-
 // Dnešní datum jako objekt
 function getTodayDate() {
   const now = new Date();
   return { y: now.getFullYear(), m: now.getMonth() + 1, d: now.getDate() };
+}
+
+// Dnešní datum jako ISO string (formát, který čeká <input type="date">)
+function getTodayISO() {
+  const { y, m, d } = getTodayDate();
+  return `${y}-${String(m).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
 }
 
 // České skloňování: 1 pátek / 2-4 pátky / 0, 5+ pátků
@@ -219,8 +216,9 @@ function showResult(data, mode) {
     .map((date) => `<li>${formatDateCZ(date)}</li>`)
     .join("");
 
-  // Zavřít details při novém výpočtu
+  // Zavřít details při novém výpočtu; bez nálezů není co rozbalovat
   els.dateListWrapper.open = false;
+  els.dateListWrapper.classList.toggle("hidden", data.count === 0);
 
   // Zobrazit kartu s animací (re-trigger)
   els.resultCard.classList.remove("hidden");
@@ -230,7 +228,12 @@ function showResult(data, mode) {
 }
 
 // CountUp animace čísla
+let numberAnimationId = null;
+
 function animateNumber(element, target) {
+  // Zrušit rozběhnutou animaci, jinak by přepsala nový výsledek starým číslem
+  cancelAnimationFrame(numberAnimationId);
+
   if (target === 0) {
     element.textContent = "0";
     return;
@@ -248,11 +251,11 @@ function animateNumber(element, target) {
     element.textContent = Math.round(eased * target);
 
     if (progress < 1) {
-      requestAnimationFrame(update);
+      numberAnimationId = requestAnimationFrame(update);
     }
   }
 
-  requestAnimationFrame(update);
+  numberAnimationId = requestAnimationFrame(update);
 }
 
 // Chybové stavy
