@@ -273,9 +273,12 @@ input[type="date"]::-webkit-date-and-time-value {
 }
 
 /* === Sdílení === */
-.btn-share {
+.share-box {
   position: relative;
   margin-top: 24px;
+}
+
+.btn-share {
   padding: 12px 28px;
   border: 1px solid var(--color-accent);
   border-radius: var(--radius-sm);
@@ -292,8 +295,36 @@ input[type="date"]::-webkit-date-and-time-value {
   background: var(--color-accent-glow);
 }
 
+.share-links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+/* Odkazy i tlačítko vypadají stejně */
+.share-link {
+  padding: 8px 14px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  color: var(--color-link);
+  font-family: var(--font);
+  font-size: 0.85rem;
+  font-weight: 500;
+  line-height: 1.4;
+  text-decoration: none;
+  cursor: pointer;
+  transition: color var(--duration-fast) var(--ease-out), border-color var(--duration-fast) var(--ease-out);
+}
+
+.share-link:hover {
+  color: var(--color-text);
+  border-color: var(--color-text-muted);
+}
+
 .share-status {
-  position: relative;
   margin-top: 10px;
   font-size: 0.85rem;
   color: var(--color-text-muted);

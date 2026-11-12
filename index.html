@@ -72,8 +72,16 @@
       <div class="result-label" id="resultLabel"></div>
       <p class="result-detail" id="resultDetail"></p>
 
-      <button class="btn-share hidden" id="shareBtn" type="button">Sdílet kartičku</button>
-      <p class="share-status" id="shareStatus" role="status"></p>
+      <!-- Sdílení: hlavní je stažení kartičky, sítě jsou doplněk -->
+      <div class="share-box hidden" id="shareBox">
+        <button class="btn-share" id="downloadBtn" type="button">Stáhnout obrázek</button>
+        <div class="share-links">
+          <a class="share-link" id="shareX" href="https://x.com/" target="_blank" rel="noopener">Sdílet na X</a>
+          <a class="share-link" id="shareFacebook" href="https://www.facebook.com/" target="_blank" rel="noopener">Sdílet na Facebooku</a>
+          <button class="share-link" id="copyTextBtn" type="button">Zkopírovat text</button>
+        </div>
+        <p class="share-status" id="shareStatus" role="status"></p>
+      </div>
 
       <details class="date-list-wrapper" id="dateListWrapper">
         <summary>Zobrazit všechna data</summary>

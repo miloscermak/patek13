@@ -1,8 +1,8 @@
 // ============================================================
 // Pátek třináctého – sdílecí kartička
 // ============================================================
-// Z výsledku nakreslí čtvercový obrázek a nabídne ho ke sdílení.
-// Na mobilu přes systémové sdílení, na počítači stažením + zkopírováním textu.
+// Z výsledku nakreslí čtvercový obrázek ke stažení a připraví odkazy na sítě.
+// Hlavní cesta je stažení: obrázek si člověk nasdílí sám tam, kde chce.
 
 const SHARE_URL = "https://patek13.inspiruj.se/";
 const SHARE_QUESTION = "Kolik jste jich přežili vy?";
@@ -84,12 +84,24 @@ async function createShareImage(count, isFriday13Today) {
   return new File([blob], "patek-trinacteho.png", { type: "image/png" });
 }
 
-// Sdílení: vrací krátkou zprávu pro uživatele (nebo prázdný text, když není co hlásit)
-async function shareResult(file, text) {
-  // Mobil: systémový dialog sdílení včetně obrázku
-  if (navigator.canShare && navigator.canShare({ files: [file] })) {
+// Odkazy, které otevřou nový příspěvek na síti. Obrázek přes ně poslat nejde,
+// síť si sama načte obecný náhled webu.
+function shareLinks(text) {
+  const url = encodeURIComponent(SHARE_URL);
+  return {
+    x: `https://x.com/intent/post?text=${encodeURIComponent(text)}&url=${url}`,
+    facebook: `https://www.facebook.com/sharer/sharer.php?u=${url}`,
+  };
+}
+
+// Uloží kartičku. Vrací krátkou zprávu pro uživatele (nebo prázdný text).
+async function saveShareImage(file) {
+  // Telefon a tablet: stažený soubor by na iPhonu skončil v Souborech, ne ve Fotkách.
+  // Systémový dialog umí „Uložit obrázek“; text schválně neposíláme, ať z toho není SMS.
+  const isTouchDevice = window.matchMedia("(pointer: coarse)").matches;
+  if (isTouchDevice && navigator.canShare && navigator.canShare({ files: [file] })) {
     try {
-      await navigator.share({ files: [file], text: `${text} ${SHARE_URL}` });
+      await navigator.share({ files: [file] });
       return "";
     } catch (error) {
       // Zavření dialogu není chyba; cokoli jiného zkusíme vyřešit stažením
@@ -97,17 +109,20 @@ async function shareResult(file, text) {
     }
   }
 
-  // Počítač: obrázek stáhnout a text s odkazem dát do schránky
+  // Počítač: obyčejné stažení
   const link = document.createElement("a");
   link.href = URL.createObjectURL(file);
   link.download = file.name;
   link.click();
   URL.revokeObjectURL(link.href);
+  return "Obrázek je stažený. Teď ho stačí přidat do příspěvku.";
+}
 
+async function copyShareText(text) {
   try {
     await navigator.clipboard.writeText(`${text} ${SHARE_URL}`);
-    return "Obrázek je stažený a text s odkazem ve schránce.";
+    return "Text s odkazem je ve schránce.";
   } catch {
-    return "Obrázek je stažený.";
+    return "Text se nepodařilo zkopírovat.";
   }
 }

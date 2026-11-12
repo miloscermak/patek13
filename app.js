@@ -16,7 +16,11 @@ const els = {
   resultNumber: document.getElementById("resultNumber"),
   resultLabel: document.getElementById("resultLabel"),
   resultDetail: document.getElementById("resultDetail"),
-  shareBtn: document.getElementById("shareBtn"),
+  shareBox: document.getElementById("shareBox"),
+  downloadBtn: document.getElementById("downloadBtn"),
+  copyTextBtn: document.getElementById("copyTextBtn"),
+  shareX: document.getElementById("shareX"),
+  shareFacebook: document.getElementById("shareFacebook"),
   shareStatus: document.getElementById("shareStatus"),
   dateList: document.getElementById("dateList"),
   dateListWrapper: document.getElementById("dateListWrapper"),
@@ -121,10 +125,14 @@ function calculateRange() {
 // Připravená kartička ke sdílení: { text, file (Promise) }
 let pendingShare = null;
 
-async function handleShare() {
+async function handleDownload() {
   if (!pendingShare) return;
-  const { text, file } = pendingShare;
-  els.shareStatus.textContent = await shareResult(await file, text);
+  els.shareStatus.textContent = await saveShareImage(await pendingShare.file);
+}
+
+async function handleCopyText() {
+  if (!pendingShare) return;
+  els.shareStatus.textContent = await copyShareText(pendingShare.text);
 }
 
 // Zobrazení výsledku s animací
@@ -150,9 +158,9 @@ function showResult(data, mode) {
     .join("");
 
   // Sdílecí kartička jen pro „Můj život“. Kreslí se předem, aby kliknutí
-  // rovnou otevřelo sdílení (prohlížeče ho po delším čekání zablokují).
+  // rovnou otevřelo uložení (prohlížeče ho po delším čekání zablokují).
   els.shareStatus.textContent = "";
-  els.shareBtn.classList.toggle("hidden", mode !== "birth");
+  els.shareBox.classList.toggle("hidden", mode !== "birth");
   if (mode === "birth") {
     const today = getTodayDate();
     const isFriday13Today = today.d === 13 && dayOfWeek(today.y, today.m, today.d) === 5;
@@ -160,6 +168,9 @@ function showResult(data, mode) {
       text: shareText(data.count, isFriday13Today),
       file: createShareImage(data.count, isFriday13Today),
     };
+    const links = shareLinks(pendingShare.text);
+    els.shareX.href = links.x;
+    els.shareFacebook.href = links.facebook;
   }
 
   // Zavřít details při novém výpočtu; bez nálezů není co rozbalovat
@@ -241,7 +252,8 @@ function init() {
     calculateRange();
   });
 
-  els.shareBtn.addEventListener("click", handleShare);
+  els.downloadBtn.addEventListener("click", handleDownload);
+  els.copyTextBtn.addEventListener("click", handleCopyText);
 }
 
 document.addEventListener("DOMContentLoaded", init);
